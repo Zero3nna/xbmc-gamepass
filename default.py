@@ -10,7 +10,7 @@ import xbmcgui
 import xbmcvfs
 import xbmcaddon
 import StorageServer
-import xml.etree.ElementTree as ElementTree
+import xml.etree.ElementTree as ET
 import random
 import md5
 from uuid import getnode as get_mac
@@ -19,10 +19,8 @@ from traceback import format_exc
 from urlparse import urlparse, parse_qs
 from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import BeautifulStoneSoup
-from operator import itemgetter
-from XmlDict import XmlDictConfig
 
-addon = xbmcaddon.Addon(id='plugin.video.nfl.gamepass')
+addon = xbmcaddon.Addon(id='script.nfl.gamepass')
 addon_path = xbmc.translatePath(addon.getAddonInfo('path'))
 addon_profile = xbmc.translatePath(addon.getAddonInfo('profile'))
 cookie_file = os.path.join(addon_profile, 'cookie_file')
@@ -41,6 +39,17 @@ def addon_log(string):
     if debug == 'true':
         xbmc.log("[addon.nfl.gamepass-%s]: %s" %(addon_version, string))
 
+def get_current_week():
+    a_week = timedelta(days=7)
+    try:
+        week_1 = datetime.strptime('August 1 2013', '%B %d %Y')
+    except TypeError: # bug in xbmc's python
+        week_1 = datetime.fromtimestamp(time.mktime(time.strptime('August 1 2013', '%B %d %Y')))
+    for i in range(27):
+        if datetime.today() > week_1 + (i * a_week):
+            week_index = i
+    return week_index
+
 def cache_seasons_and_weeks(login_data):
     soup = BeautifulSoup(login_data, convertEntities=BeautifulSoup.HTML_ENTITIES)
 
@@ -58,9 +67,10 @@ def cache_seasons_and_weeks(login_data):
     try:
         weeks_soup = soup.find('select', id='weekSelect').findChildren()
         weeks = {}
-        for week in weeks_soup:
-            week_code = week['value']
-            weeks[week_code] = week.string
+        index = 0
+        for i in weeks_soup:
+            weeks[index] = {'week_id': i['value'], 'name': i.string, 'index': index}
+            index += 1
         cache.set('weeks', repr(weeks))
         addon_log('Weeks cached')
     except:
@@ -69,27 +79,6 @@ def cache_seasons_and_weeks(login_data):
 
     return True
 
-def display_games(season, week_code):
-    games = get_weeks_games(season, week_code)
-    if games:
-        for game in games:
-            home_team = game['homeTeam']
-            away_team = game['awayTeam']
-            game_name = '%s %s at %s %s' %(away_team['city'], away_team['name'], home_team['city'], home_team['name'])
-
-            try:
-                start_time = datetime.strptime(game['gameTimeGMT'], '%Y-%m-%dT%H:%M:%S.000')
-                end_time = datetime.strptime(game['gameEndTimeGMT'], '%Y-%m-%dT%H:%M:%S.000')
-                duration = (end_time - start_time).seconds / 60
-            except:
-                addon_log(format_exc())
-                duration = None
-
-            add_dir(game_name, game['programId'], 4, icon, '', duration, False)
-    else:
-        dialog = xbmcgui.Dialog()
-        dialog.ok("Fetching Games Failed", "Fetching Game Data Failed.")
-        addon_log('Fetching games failed.')
 
 def display_seasons(seasons):
     for season in seasons:
@@ -122,8 +111,8 @@ def gamepass_login():
         return False
 
 # The plid parameter used when requesting the video path appears to be an MD5 of... something.
-# However, I don't know what it is an "id" of, since the value seems to change constantly.
-# Reusing a plid doesn't work, so I assume it's a unique id for the instance of the player.
+# However, I don't knwo what it is an "id" of, since the value seems to change constantly.
+# Reusing a plid doesn't work, so, I assume it's a unique identifier for the player as we request a stream.
 # This, pseudorandom approach seems to work for now.
 def gen_plid():
     rand = random.getrandbits(10)
@@ -170,21 +159,68 @@ def get_video_path(game_id):
 
 # season is in format: YYYY
 # week is in format 101 (1st week preseason) or 213 (13th week of regular season)
-def get_weeks_games(season, week):
+def get_weeks_games(season=2013, week=103):
     url = 'https://gamepass.nfl.com/nflgp/servlets/games'
     post_data = {
         'isFlex': 'true',
         'season': season,
         'week': week
     }
-
     game_data = make_request(url, urllib.urlencode(post_data))
-    
-    root = ElementTree.XML(game_data)
-    game_data_dict = XmlDictConfig(root)
-    games = game_data_dict['games']
 
-    return games['game']
+    soup = BeautifulStoneSoup(game_data, convertEntities=BeautifulSoup.XML_ENTITIES)
+    games = []
+    for game in soup('game'):
+        game_id = ''
+        try:
+            game_id = game.programid.string
+        except AttributeError:
+            addon_log('No program id: %s' %game)
+            format_exc()
+            continue
+
+        away_team = game.awayteam('city')[0].string + ' ' + game.awayteam('name')[0].string
+        home_team = game.hometeam('city')[0].string + ' ' + game.hometeam('name')[0].string
+
+        try:
+            start_time = datetime.fromtimestamp(time.mktime(time.strptime(game.gametimegmt.string, '%Y-%m-%dT%H:%M:%S.000')))
+            end_time = datetime.fromtimestamp(time.mktime(time.strptime(game.gameendtimegmt.string, '%Y-%m-%dT%H:%M:%S.000')))
+            duration = (end_time - start_time).seconds / 60
+        except:
+            addon_log(format_exc())
+            duration = None
+
+        try:
+            game_datetime = datetime.fromtimestamp(time.mktime(time.strptime(game.date.string, '%Y-%m-%dT%H:%M:%S.000')))
+            game_date_string = game_datetime.strftime('%A, %b %d %I:%M %p')
+        except:
+            addon_log(format_exc())
+            game_date_string = ''
+
+        try:
+            away_score = game.awayteam('score')[0].string
+            home_score = game.hometeam('score')[0].string
+        except:
+            away_score = ''
+            home_score = ''
+            
+        thumb_path = 'https://secure.footprint.net/neulion-e4/nfl/player2013-v2/nflgp/flex/images/teams/%s.png'
+        home_thumb = thumb_path %game.hometeam('id')[0].string
+        away_thumb = thumb_path %game.awayteam('id')[0].string
+        
+
+        game = ({'away_team': {'name': away_team,
+                               'thumb': away_thumb,
+                               'score': away_score},
+                 'home_team': {'name': home_team,
+                               'thumb': home_thumb,
+                               'score': home_score},
+                 'date': game_date_string,
+                 'duration': duration,
+                 'game_id': game_id})
+        games.append(game)
+
+    return games
 
 def make_request(url, data=None, headers=None):
     addon_log('Request URL: %s' %url)
@@ -220,11 +256,12 @@ def parse_manifest(manifest):
     try:
         soup = BeautifulStoneSoup(manifest, convertEntities=BeautifulStoneSoup.XML_ENTITIES)
         items = [{'servers': [{'name': x['name'], 'port': x['port']} for x in i('httpserver')],
-                  'url': i['url'], 'bitrate': int(i['bitrate']),
+                  'url': i['url'],
                   'info': '%sx%s Bitrate: %s' %(i.video['height'], i.video['width'], i['bitrate'])}
                  for i in soup('streamdata')]
 
-        ret = select_bitrate(items)
+        dialog = xbmcgui.Dialog()
+        ret = dialog.select('Choose a stream', [i['info'] for i in items])
 
         if ret >= 0:
             addon_log('Selected: %s' %items[ret])
@@ -236,91 +273,95 @@ def parse_manifest(manifest):
         addon_log(format_exc())
         return False
 
-def select_bitrate(streams):
-    use_highest_bitrate = addon.getSetting('bitrate')
 
-    streams.sort(key=itemgetter('bitrate'), reverse=True)
+# def get_params():
+    # p = parse_qs(sys.argv[2][1:])
+    # for i in p.keys():
+        # p[i] = p[i][0]
+    # return p
+
+
+# if debug == 'true':
+cache.dbg = True
+# params = get_params()
+# addon_log("params: %s" %params)
+
+# try:
+    # mode = int(params['mode'])
+# except:
+    # mode = None
     
-    if use_highest_bitrate == 'true':
-        ret = 0
-    else:
-        dialog = xbmcgui.Dialog()
-        ret = dialog.select('Choose a stream', [i['info'] for i in streams])
-    addon_log('ret: %s' %ret)
-    return ret
-
-def add_dir(name, url, mode, iconimage, discription="", duration=None, isfolder=True):
-    params = {'name': name, 'url': url, 'mode': mode}
-    url = '%s?%s' %(sys.argv[0], urllib.urlencode(params))
-    listitem = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
-    listitem.setProperty("Fanart_Image", fanart)
-    if not isfolder:
-        # IsPlayable tells xbmc that there is more work to be done to resolve a playable url
-        listitem.setProperty('IsPlayable', 'true')
-        listitem.setInfo(type="Video", infoLabels={"Title": name, "Plot": discription, "Duration": duration})
-    xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, isfolder)
-
-def get_params():
-    p = parse_qs(sys.argv[2][1:])
-    for i in p.keys():
-        p[i] = p[i][0]
-    return p
-
-
-if debug == 'true':
-    cache.dbg = True
-params = get_params()
-addon_log("params: %s" %params)
-
-try:
-    mode = int(params['mode'])
-except:
-    mode = None
-
-if mode == None:
-    seasons = None
-    if username and password:
-        login_success = gamepass_login()
-        if login_success:
-            seasons = eval(cache.get('seasons'))
-    # in some instances logging in is not necessary
-    elif not username:
+class GamepassGUI(xbmcgui.WindowXMLDialog):
+    def __init__( self, *args, **kwargs ):
+        xbmcgui.WindowXMLDialog.__init__(self)
+        self.action_previous_menu = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
+        self.seasons = None
+        self.weeks = None
+        self.season = '2013'
+        self.games = None
+        
+    def onInit(self):
+        self.window = xbmcgui.Window(xbmcgui.getCurrentWindowDialogId())
+        addon_log('Window ID: %s' %self.window)
         try:
-            seasons = eval(cache.get('seasons'))
+            self.seasons = eval(cache.get('seasons'))
+            self.weeks = eval(cache.get('weeks'))
+            print 'We have seasons ---------------------'
         except SyntaxError:
-            addon_log('No season cache')
+            print('No season cache')
             data = make_request('https://gamepass.nfl.com/nflgp/secure/schedule')
             ok = cache_seasons_and_weeks(data)
             if ok:
-                seasons = eval(cache.get('seasons'))
+                print 'OKKOOKOKOKOKOKOKOKKOKOKOKOKO'
+                self.seasons = eval(cache.get('seasons'))
+        if self.seasons and self.weeks:
+            week_index = get_current_week()
+            self.week = self.weeks[week_index]['week_id']
+        self.display_games()
+
+    def display_games(self):
+        print '--- %s - %s ---' %(self.season, self.week)
+        # self.games = get_weeks_games(self.season, self.week)
+        self.games = cache.cacheFunction(get_weeks_games)
+        print '==============================================='
+        print self.games
+        print len(self.games)
+        if self.games:
+            index = 0
+            for i in self.games:
+                index += 1
+                control = self.window.getControl(1270 + index)
+                listitem = xbmcgui.ListItem(i['away_team']['name'], i['home_team']['name'])
+                listitem.setProperty("awayThumb", i['away_team']['thumb'])
+                listitem.setProperty("homeThumb", i['home_team']['thumb'])
+                listitem.setProperty("game_id", i['game_id'])
+                listitem.setProperty('dateString', i['date'])
+                listitem.setInfo(type="Video", infoLabels={"Title": '%s at %s' %(i['away_team']['name'], i['away_team']['name']), 
+                                                           "Duration": i['duration']})
+                control.addItem(listitem)
+                if index == 4: break
+        else:
+            dialog = xbmcgui.Dialog()
+            dialog.ok("Fetching Games Failed", "Fetching Game Data Failed.")
+            addon_log('Fetching games failed.')
+            
         
-    if seasons:
-        display_seasons(seasons)
-    else:
-        dialog = xbmcgui.Dialog()
-        dialog.ok("Account Info Not Set", "Please set your Game Pass username and password", "in Add-on Settings.")
-        addon_log('No account settings detected.')
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    def onAction(self, action):
+        if action == 13:
+            #keyboard x key
+            self.close()
 
-elif mode == 1:
-    # unused for the time being
-    # will be used later when/if NFL Network and NFL RedZone support is added
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+        if action in self.action_previous_menu:
+            addon_log('Action: action_previous_menu')
+            self.close()
+            
+    
+if not xbmcvfs.exists(addon_profile):
+    xbmcvfs.mkdir(addon_profile)
+    
+if (__name__ == "__main__"):
+    addon_log('script starting')
+    window = GamepassGUI('script-gamepass.xml', addon_path)
+    window.doModal()
 
-elif mode == 2:
-    weeks = eval(cache.get('weeks'))
-    season = params['name']
-    display_weeks(season, weeks)
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
-
-elif mode == 3:
-    season, week_code = params['url'].split(';', 1)
-    display_games(season, week_code)
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
-
-elif mode == 4:
-    game_id = params['url']
-    resolved_url = get_stream_url(game_id)
-    addon_log('Resolved URL: %s.' %resolved_url)
-    item = xbmcgui.ListItem(path=resolved_url)
-    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+addon_log('script finished')

@@ -1,0 +1,657 @@
+<window type="window" id="9506">
+	<allowoverlay>yes</allowoverlay>
+	<defaultcontrol always="true">1260</defaultcontrol>
+	<controls>
+    
+        <control type="image">
+            <description>Normal Default Background Image</description>
+            <posx>0</posx>
+            <posy>0</posy>
+            <width>1280</width>
+            <height>720</height>
+            <aspectratio>scale</aspectratio>
+            <texture>GamePass/background1.png</texture>
+        </control>
+	
+		<control type="group" id="1260">
+            <description>main group control</description>
+            <posx>20</posx>
+            <posy>20</posy>
+            <width>1260</width>
+            <height>700</height>
+            <defaultcontrol>1261</defaultcontrol>
+            <visible>true</visible>
+            <onup>2</onup>
+            <ondown>3</ondown>
+            <onleft>1</onleft>
+            <onright>1</onright>
+            <!--control type="image">
+                <description>overlay image control</description>
+                <width>1260</width>
+                <height>700</height>
+                <visible>true</visible>
+                <texture>GamePass/ScheduleBackground.png</texture>
+                <aspectratio>scale</aspectratio>
+            </control-->
+            <control type="label">
+                <posx>20</posx>
+                <posy>40</posy>
+                <width>200</width>
+                <height>11</height>
+                <font>font13</font>
+                <selectedcolor>green</selectedcolor>
+                <label>[B]Season 2013, Week 1[/B]</label>
+            </control>
+			<control type="button" id="1261">
+				<description>change schedule</description>
+				<posx>260</posx>
+				<posy>20</posy>
+				<width>240</width>
+				<height>50</height>
+				<texturefocus border="10">GamePass/ChatConnectNF.png</texturefocus>
+				<texturenofocus border="10">GamePass/ChatConnectFO.png</texturenofocus>
+                <label>[B]Change Schedule[/B]</label>
+				<font>font13</font>
+				<onleft>1240</onleft>
+				<onright>1239</onright>
+				<onup>60</onup>
+				<align>center</align>
+				<aligny>center</aligny>
+				<textcolor>FF7D7D7D</textcolor>
+			</control>
+			<control type="button" id="1262">
+				<description>nfl network</description>
+				<posx>860</posx>
+				<posy>20</posy>
+				<width>240</width>
+				<height>50</height>
+				<texturefocus border="10">GamePass/ChatConnectNF.png</texturefocus>
+				<texturenofocus border="10">GamePass/ChatConnectFO.png</texturenofocus>
+                <label>[B]NFL Network[/B]</label>
+				<font>font13</font>
+				<onleft>1240</onleft>
+				<onright>1239</onright>
+				<onup>60</onup>
+				<align>center</align>
+				<aligny>center</aligny>
+				<textcolor>FF7D7D7D</textcolor>
+			</control>
+			<control type="button" id="1263">
+				<description>nfl redzone</description>
+				<posx>560</posx>
+				<posy>20</posy>
+				<width>240</width>
+				<height>50</height>
+				<texturefocus border="10">GamePass/ChatConnectNF.png</texturefocus>
+				<texturenofocus border="10">GamePass/ChatConnectFO.png</texturenofocus>
+                <label>[B]NFL RedZone[/B]</label>
+				<font>font13</font>
+				<onleft>1240</onleft>
+				<onright>1239</onright>
+				<onup>60</onup>
+				<align>center</align>
+				<aligny>center</aligny>
+				<textcolor>FF7D7D7D</textcolor>
+			</control>
+        </control>
+        
+        <!-- top row -->
+        <control type="grouplist" id="1270">
+            <description>Game list control</description>
+            <posx>80</posx>
+            <posy>130</posy>
+            <width>800</width>
+            <height>700</height>
+            <itemgap>20</itemgap>
+            <pagecontrol>2</pagecontrol>
+            <scrolltime tween="sine" easing="out">200</scrolltime>
+            <orientation>vertical</orientation>
+            <usecontrolcoords>false</usecontrolcoords>
+            <visible>true</visible>
+            <onup>2</onup>
+            <ondown>3</ondown>
+            <onleft>1</onleft>
+            <onright>1</onright>
+            
+            <control type="panel" id="1271">
+                <width>760</width>
+                <height>180</height>
+                <onleft>9000</onleft>
+                <onright>60</onright>
+                <onup>52</onup>
+                <ondown>52</ondown>
+                <scrolltime tween="sine" easing="out">200</scrolltime>
+                <viewtype label="536">wide</viewtype>
+                <pagecontrol>60</pagecontrol>
+                <!--include>contentpanelslide</include-->
+                <itemlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlay.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlayFo.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </focusedlayout>
+            </control>
+            
+            <control type="panel" id="1272">
+                <width>760</width>
+                <height>180</height>
+                <onleft>9000</onleft>
+                <onright>60</onright>
+                <onup>52</onup>
+                <ondown>52</ondown>
+                <scrolltime tween="sine" easing="out">200</scrolltime>
+                <viewtype label="536">wide</viewtype>
+                <pagecontrol>60</pagecontrol>
+                <!--include>contentpanelslide</include-->
+                <itemlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlay.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlayFo.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </focusedlayout>
+            </control>
+
+            <control type="panel" id="1273">
+                <width>760</width>
+                <height>180</height>
+                <onleft>9000</onleft>
+                <onright>60</onright>
+                <onup>52</onup>
+                <ondown>52</ondown>
+                <scrolltime tween="sine" easing="out">200</scrolltime>
+                <viewtype label="536">wide</viewtype>
+                <pagecontrol>60</pagecontrol>
+                <!--include>contentpanelslide</include-->
+                <itemlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlay.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlayFo.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </focusedlayout>
+            </control>
+            
+            <control type="panel" id="1274">
+                <width>760</width>
+                <height>180</height>
+                <onleft>9000</onleft>
+                <onright>60</onright>
+                <onup>52</onup>
+                <ondown>52</ondown>
+                <scrolltime tween="sine" easing="out">200</scrolltime>
+                <viewtype label="536">wide</viewtype>
+                <pagecontrol>60</pagecontrol>
+                <!--include>contentpanelslide</include-->
+                <itemlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlay.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="180" width="760">
+                    <control type="image">
+                        <description>Game overlay image control</description>
+                        <visible>true</visible>
+                        <texture>GamePass/GameOverlayFo.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>30</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(awayThumb)</info>
+                    </control>
+                    <control type="image">
+                        <posx>30</posx>
+                        <posy>100</posy>
+                        <width>60</width>
+                        <height>40</height>
+                        <texture>GamePass/TEN.png</texture>
+                        <aspectratio>keep</aspectratio>
+                        <info>ListItem.Property(homeThumb)</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>40</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label</info>
+                    </control>
+                    <control type="label">
+                        <posx>110</posx>
+                        <posy>100</posy>
+                        <width>240</width>
+                        <height>22</height>
+                        <font>font16</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Label2</info>
+                    </control>
+                    <control type="label">
+                        <posx>320r</posx>
+                        <posy>40</posy>
+                        <width>320</width>
+                        <height>22</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <info>ListItem.Property(dateString)</info>
+                    </control>
+                    <control type="label">
+                        <posx>200r</posx>
+                        <posy>100</posy>
+                        <width>100</width>
+                        <height>11</height>
+                        <font>font13</font>
+                        <selectedcolor>green</selectedcolor>
+                        <label>Media On</label>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+	</controls>
+</window>
